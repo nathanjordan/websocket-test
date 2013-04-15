@@ -2,23 +2,109 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>The HTML5 Herald</title>
-  <meta name="description" content="The HTML5 Herald">
-  <meta name="author" content="SitePoint">
-  <link rel="stylesheet" href="css/styles.css?v=1.0">
+  <title>WebSocket Chat</title>
+  <meta name="description" content="WebSocket Chat using socket.io">
   <!--[if lt IE 9]>
   <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-  <script src="http://jquery-websocket.googlecode.com/files/jquery.websocket-0.0.1.js"></script>
+  <!--<script src="http://jquery-websocket.googlecode.com/files/jquery.websocket-0.0.1.js"></script>-->
+<script src="http://localhost:1337/socket.io/socket.io.js"></script>
+
+<style type="text/css">
+
+#chatbox
+{
+
+width: 600px;
+height: 400px;
+background-color:#111;
+color: #E9E9E9;
+margin-bottom: 15px;
+}
+
+#chatEntry
+{
+
+width: 550px;
+
+}
+
+button
+{
+
+width:50px;
+
+}
+.server
+{
+
+font-weight:bold;
+color:#F00;
+
+}
+.you
+{
+
+font-weight:bold;
+color:#00F;
+
+}
+
+</style>
+
 <script type="text/javascript">
 
-var ws = $.websocket("ws://127.0.0.1:3333/");
+$(function() {
+	
+	//var ws = $.websocket("ws://127.0.0.1:1337/");
+	//ws.send('lolz');
+	
+	var socket = io.connect('http://localhost:1337');
+
+	socket.on('chat', function (data) {
+		
+		var span = $('<div>' + '<span class="server">Server: </span>' + data + '</div>');
+
+		//span.html(data);
+
+		$('#chatbox').append(span);
+
+		});
+
+	$("#sendchat").click( function() {
+		
+		var message = $("#chatEntry").val()
+
+		socket.emit( 'chat' , message );
+
+		$("#chatEntry").val('')
+		
+		
+		$("#chatEntry").focus()
+	
+		var span = $('<div>' + '<span class="you">You: </span>' + message + '</div>');
+
+		//span.html(data);
+
+		$('#chatbox').append(span);
+
+
+		});
+
+
+	});
+
 
 </script>
 
 </head>
 <body>
   <h1>WebSocket Test</h1>
+  <div id="chatbox">
+  	<span id="welcomemsg">Welcome to WebSocket chat!</span>
+  </div>
+	<input type="text" id="chatEntry"/>
+	<button id="sendchat">Send</button>
 </body>
 </html>
